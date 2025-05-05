@@ -18,9 +18,6 @@ const connector = new ButtplugNodeWebsocketClientConnector(
 );
 
 async function main() {
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-
     const client = new ButtplugClient("mcp-svakom-samneo");
     await client.connect(connector);
 
@@ -36,10 +33,12 @@ async function main() {
     });
 
     if (device.name !== "Svakom Sam Neo") throw new Error("Device is found but not Svakom Sam Neo");
-    
-    console.error(`✅ connected: ${device.name}`);
 
     createPistonTools(server, device);
+    console.error(`✅ connected: ${device.name}`);
+
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
 }
 
 main().catch(e => {
