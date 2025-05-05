@@ -24,7 +24,7 @@ async function main() {
     const client = new ButtplugClient("mcp-svakom-samneo");
     await client.connect(connector);
 
-    console.log("🔎 scanning…");
+    console.error("🔎 scanning…");
     await client.startScanning();
 
     const device: ButtplugClientDevice = await new Promise((resolve, reject) => {
@@ -37,7 +37,7 @@ async function main() {
 
     if (device.name !== "Svakom Sam Neo") throw new Error("Device is found but not Svakom Sam Neo");
     
-    console.log(`✅ connected: ${device.name}`);
+    console.error(`✅ connected: ${device.name}`);
 
     createPistonTools(server, device);
 }
