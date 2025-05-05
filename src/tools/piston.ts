@@ -23,11 +23,13 @@ export function createPistonTools(server: McpServer, device: ButtplugClientDevic
                     await new Promise(resolve => setTimeout(resolve, delay));
                 }
 
+                await device.stop();
+
                 return {
                     content: [
                         {
                             type: "text",
-                            text: `Slowly move in and out for ${duration}ms`,
+                            text: `duration: ${duration}ms, steps: ${steps}, vibrationPower: ${vibrationPower}`,
                         },
                     ]
                 }
