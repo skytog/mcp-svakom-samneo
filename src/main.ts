@@ -17,8 +17,6 @@ const connector = new ButtplugNodeWebsocketClientConnector(
     "ws://localhost:12345",
 );
 
-createSlowlyPistonTools(server);
-
 async function main() {
     const transport = new StdioServerTransport();
     await server.connect(transport);
@@ -40,6 +38,8 @@ async function main() {
     if (device.name !== "Svakom Sam Neo") throw new Error("Device is found but not Svakom Sam Neo");
     
     console.log(`✅ connected: ${device.name}`);
+
+    createPistonTools(server, device);
 }
 
 main().catch(e => {
