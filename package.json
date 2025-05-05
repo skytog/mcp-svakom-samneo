@@ -15,7 +15,7 @@
         "build"
     ],
     "keywords": [],
-    "author": "",
+    "author": "Kyure_A",
     "license": "GPL",
     "packageManager": "pnpm@10.9.0",
     "dependencies": {
