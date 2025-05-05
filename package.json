@@ -2,6 +2,7 @@
     "name": "mcp-svakom-samneo",
     "version": "0.1.0",
     "description": "",
+    "main": "src/server.ts",
     "bin": {
         "svakom-samneo": "./build/main.js"
     },
