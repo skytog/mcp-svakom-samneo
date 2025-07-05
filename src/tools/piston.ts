@@ -1,10 +1,12 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { type ButtplugClientDevice } from "buttplug";
+import { type ButtplugClientDevice, ActuatorType } from "buttplug";
+import { SamNeoVersion } from "../main.js";
 
 export function createPistonTools(
   server: McpServer,
   device: ButtplugClientDevice,
+  deviceVersion: SamNeoVersion,
 ) {
   server.tool(
     "Svakom-Sam-Neo-Piston",
@@ -38,19 +40,41 @@ export function createPistonTools(
         const diff = 1 / steps;
         const delay = duration / steps;
 
-        for (let i = 0; i < steps; i++) {
-          const intensity = diff * i;
-          await device.vibrate([vibrationPower, intensity]);
-          await new Promise((resolve) => setTimeout(resolve, delay));
+        console.error(`[PistonTool] Device version: ${deviceVersion}`);
+
+        if (deviceVersion === SamNeoVersion.ORIGINAL) {
+          // Original Sam Neo: Use old vibrate API with 2 vibrators
+          for (let i = 0; i < steps; i++) {
+            const intensity = diff * i;
+            // vibrationPower controls base vibration, intensity controls piston motion
+            await device.vibrate([vibrationPower, intensity]);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
+        } else {
+          // Sam Neo 2 Series (Neo2/Neo2 Pro): Use scalar API with single vibrator
+          for (let i = 0; i < steps; i++) {
+            const intensity = diff * i;
+            await device.scalar([
+              {
+                Index: 0,
+                Scalar: intensity * vibrationPower,
+                ActuatorType: ActuatorType.Vibrate,
+              },
+            ]);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
         }
 
         await device.stop();
 
+        console.error(
+          `[PistonTool] Completed: duration=${duration}ms, steps=${steps}, vibrationPower=${vibrationPower}, device=${deviceVersion}`,
+        );
         return {
           content: [
             {
               type: "text",
-              text: `duration: ${duration}ms, steps: ${steps}, vibrationPower: ${vibrationPower}`,
+              text: `Piston motion completed - duration: ${duration}ms, steps: ${steps}, vibrationPower: ${vibrationPower}, device: ${deviceVersion}`,
             },
           ],
         };
